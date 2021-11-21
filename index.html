@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+       <script src="libs/echarts.min.js"></script>
+       <title>
+           Values of variables
+       </title>
+       <script src="d3.js"></script>
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript">
+
+d3.json("data.json").then(function (Data) {
+
+    let dom = document.getElementById("container"); // select container
+    let treeMap = echarts.init(dom); // initiate echarts object
+    function getLevelOption() {
+    return [
+      {
+        itemStyle: {
+          borderColor: '#555',
+          borderWidth: 5,
+          gapWidth: 5
+        },
+        emphasis: {
+          itemStyle: {
+            borderColor: '#ddd'
+          }
+        }
+      },
+      {
+        itemStyle: {
+          borderColor: '#555',
+          borderWidth: 5,
+          gapWidth: 5
+        },
+        emphasis: {
+          itemStyle: {
+            borderColor: '#ddd'
+          }
+        }
+      },
+      {
+        itemStyle: {
+          borderColor: '#111',
+          borderWidth: 5,
+          gapWidth: 5
+        },
+        colorSaturation: [0.35, 0.7]
+      }
+    ];
+  }
+  treeMap.setOption(
+    (option = {
+      title: {
+        text: 'Values',
+        left: 'center'
+      },
+      tooltip: {
+        formatter: function (info) {
+          var value = info.value;
+          var treePathInfo = info.treePathInfo;
+          var treePath = [];
+          for (var i = 1; i < treePathInfo.length; i++) {
+            treePath.push(treePathInfo[i].name);
+          }
+          return [
+            '<div class="tooltip-title">' +
+              echarts.format.encodeHTML(treePath.join('/')) +
+              '</div>',
+            'Value: ' + echarts.format.addCommas(value)
+          ].join('');
+        }
+      },
+      series: [
+        {
+          name: 'Values',
+          type: 'treemap',
+          visibleMin: 300,
+          label: {
+            show: true,
+            formatter: '{b}'
+          },
+          upperLabel: {
+            show: true,
+            height: 30
+          },
+          itemStyle: {
+            borderColor: '#777',
+            gapWidth: 5
+          },
+          levels: getLevelOption(),
+          data: Data
+        }
+      ]
+    })
+  );
+});
+
+       </script>
+   </body>
+</html>
